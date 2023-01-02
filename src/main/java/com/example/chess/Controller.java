@@ -112,7 +112,6 @@ public class Controller implements Initializable {
         draggableMaker.makeDraggable(blackPawn5);
         draggableMaker.makeDraggable(blackPawn6);
         draggableMaker.makeDraggable(blackPawn7);
-        draggableMaker.makeDraggable(blackPawn2);
-        wsws
+        draggableMaker.makeDraggable(blackPawn8);
     }
 }
