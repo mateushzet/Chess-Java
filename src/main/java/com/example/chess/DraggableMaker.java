@@ -1,16 +1,27 @@
 package com.example.chess;
-
 import javafx.scene.Node;
-
-import static java.lang.Math.round;
+import javafx.scene.image.ImageView;
 
 public class DraggableMaker {
     private double mouseAnchorX;
     private double mouseAnchorY;
     static String turn = "white";
-    String color;
+    private int nodeX;
+    private int nodeY;
+    private String color;
+    static protected ImageView[][] board;
+    private ImageView temp;
+
+    public DraggableMaker(ImageView[][] board) {
+        this.board = board;
+    }
 
     public void makeDraggable(Node node){
+
+        node.setOnMousePressed(mouseEvent -> {
+            nodeX = (int)node.getLayoutX();
+            nodeY = (int)node.getLayoutY();
+        });
 
         node.setOnMouseDragged(mouseEvent -> {
             color = node.getId().substring(0,5);
@@ -33,6 +44,7 @@ public class DraggableMaker {
         });
 
         node.setOnMouseReleased(mouseDragEvent -> {
+
             color = node.getId().substring(0,5);
             if(turn.equals(color)) {
                 int fieldX, fieldY;
@@ -50,11 +62,28 @@ public class DraggableMaker {
                 else
                     fieldY = (int) mouseDragEvent.getSceneY() / 100 * 100;
 
+
+
+
+                System.out.println();
+                if(board[fieldX/100][fieldY/100] != null)
+                board[fieldX/100][fieldY/100].setVisible(false);
+                board[fieldX/100][fieldY/100] = board[nodeX/100][nodeY/100];
+                board[nodeX/100][nodeY/100] = null;
                 node.setLayoutX(fieldX);
                 node.setLayoutY(fieldY);
-
                 turn = turn.equals("white") ? "black" : "white";
+
+                for (int i = 0; i < 8; i++) {
+                    for (int j = 0; j < 8 ; j++) {
+                        if(board[j][i]!=null)
+                        System.out.print("X");
+                        else System.out.print("_");
+                    }
+                    System.out.println();
+                }
             }
+
         });
     }
 }

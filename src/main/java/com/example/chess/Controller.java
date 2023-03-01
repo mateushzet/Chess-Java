@@ -75,43 +75,61 @@ public class Controller implements Initializable {
     @FXML
     private ImageView blackRook2;
 
-    DraggableMaker draggableMaker = new DraggableMaker();
+    static protected ImageView[][] board = new ImageView[8][8];
+
+
+
+    DraggableMaker draggableMaker = new DraggableMaker(board);
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
 
-        draggableMaker.makeDraggable(whiteRook1);
-        draggableMaker.makeDraggable(whiteRook2);
-        draggableMaker.makeDraggable(whiteKnight1);
-        draggableMaker.makeDraggable(whiteKnight2);
-        draggableMaker.makeDraggable(whiteBishop1);
-        draggableMaker.makeDraggable(whiteBishop2);
-        draggableMaker.makeDraggable(whiteQueen);
-        draggableMaker.makeDraggable(whiteKing);
-        draggableMaker.makeDraggable(whitePawn1);
-        draggableMaker.makeDraggable(whitePawn2);
-        draggableMaker.makeDraggable(whitePawn3);
-        draggableMaker.makeDraggable(whitePawn4);
-        draggableMaker.makeDraggable(whitePawn5);
-        draggableMaker.makeDraggable(whitePawn6);
-        draggableMaker.makeDraggable(whitePawn7);
-        draggableMaker.makeDraggable(whitePawn8);
 
-        draggableMaker.makeDraggable(blackRook1);
-        draggableMaker.makeDraggable(blackRook2);
-        draggableMaker.makeDraggable(blackKnight1);
-        draggableMaker.makeDraggable(blackKnight2);
-        draggableMaker.makeDraggable(blackBishop1);
-        draggableMaker.makeDraggable(blackBishop2);
-        draggableMaker.makeDraggable(blackQueen);
-        draggableMaker.makeDraggable(blackKing);
-        draggableMaker.makeDraggable(blackPawn1);
-        draggableMaker.makeDraggable(blackPawn2);
-        draggableMaker.makeDraggable(blackPawn3);
-        draggableMaker.makeDraggable(blackPawn4);
-        draggableMaker.makeDraggable(blackPawn5);
-        draggableMaker.makeDraggable(blackPawn6);
-        draggableMaker.makeDraggable(blackPawn7);
-        draggableMaker.makeDraggable(blackPawn8);
+        board[0][7] = whiteRook1;
+        board[7][7] = whiteRook2;
+        board[1][7] = whiteKnight1;
+        board[6][7] = whiteKnight2;
+        board[2][7] = whiteBishop1;
+        board[5][7] = whiteBishop2;
+        board[3][7] = whiteQueen;
+        board[4][7] = whiteKing;
+        board[0][6] = whitePawn1;
+        board[1][6] = whitePawn2;
+        board[2][6] = whitePawn3;
+        board[3][6] = whitePawn4;
+        board[4][6] = whitePawn5;
+        board[5][6] = whitePawn6;
+        board[6][6] = whitePawn7;
+        board[7][6] = whitePawn8;
+
+        board[0][0] = blackRook1;
+        board[7][0] = blackRook2;
+        board[1][0] = blackKnight1;
+        board[6][0] = blackKnight2;
+        board[2][0] = blackBishop1;
+        board[5][0] = blackBishop2;
+        board[3][0] = blackQueen;
+        board[4][0] = blackKing;
+        board[0][1] = blackPawn1;
+        board[1][1] = blackPawn2;
+        board[2][1] = blackPawn3;
+        board[3][1] = blackPawn4;
+        board[4][1] = blackPawn5;
+        board[5][1] = blackPawn6;
+        board[6][1] = blackPawn7;
+        board[7][1] = blackPawn8;
+
+        for (int i = 2; i < 6; i++) {
+            for (int j = 0; j < 8; j++) {
+                board[j][i] = null;
+            }
+        }
+
+        for (int i = 0; i < 2; i++) {
+            for (int j = 0; j < 8; j++) {
+                draggableMaker.makeDraggable(board[j][i]);
+                draggableMaker.makeDraggable(board[j][i+6]);
+            }
+        }
     }
 }
