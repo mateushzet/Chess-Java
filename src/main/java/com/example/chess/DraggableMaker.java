@@ -65,7 +65,7 @@ public class DraggableMaker {
 
 
 
-                System.out.println();
+                if(isMoveLegal()){
                 if(board[fieldX/100][fieldY/100] != null)
                 board[fieldX/100][fieldY/100].setVisible(false);
                 board[fieldX/100][fieldY/100] = board[nodeX/100][nodeY/100];
@@ -82,8 +82,15 @@ public class DraggableMaker {
                     }
                     System.out.println();
                 }
+            } else{
+                    node.setLayoutX(nodeX);
+                    node.setLayoutY(nodeY);
+                }
             }
 
         });
+    }
+    private boolean isMoveLegal(){
+        return true;
     }
 }
