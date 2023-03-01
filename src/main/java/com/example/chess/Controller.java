@@ -10,114 +10,111 @@ import java.util.ResourceBundle;
 public class Controller implements Initializable {
 
     @FXML
-    private ImageView whiteRook1;
+    private ImageView WR1;
     @FXML
-    private ImageView whiteRook2;
+    private ImageView WR2;
     @FXML
-    private ImageView whiteKnight1;
+    private ImageView WK1;
     @FXML
-    private ImageView whiteKnight2;
+    private ImageView WK2;
     @FXML
-    private ImageView whiteBishop1;
+    private ImageView WB1;
     @FXML
-    private ImageView whiteBishop2;
+    private ImageView WB2;
     @FXML
-    private ImageView whiteQueen;
+    private ImageView WQ;
     @FXML
-    private ImageView whiteKing;
+    private ImageView Wk;
     @FXML
-    private ImageView whitePawn1;
+    private ImageView WP1;
     @FXML
-    private ImageView whitePawn2;
+    private ImageView WP2;
     @FXML
-    private ImageView whitePawn3;
+    private ImageView WP3;
     @FXML
-    private ImageView whitePawn4;
+    private ImageView WP4;
     @FXML
-    private ImageView whitePawn5;
+    private ImageView WP5;
     @FXML
-    private ImageView whitePawn6;
+    private ImageView WP6;
     @FXML
-    private ImageView whitePawn7;
+    private ImageView WP7;
     @FXML
-    private ImageView whitePawn8;
+    private ImageView WP8;
 
     @FXML
-    private ImageView blackBishop1;
+    private ImageView BR1;
     @FXML
-    private ImageView blackBishop2;
+    private ImageView BR2;
     @FXML
-    private ImageView blackKing;
+    private ImageView BK1;
     @FXML
-    private ImageView blackKnight1;
+    private ImageView BK2;
     @FXML
-    private ImageView blackKnight2;
+    private ImageView BB1;
     @FXML
-    private ImageView blackPawn1;
+    private ImageView BB2;
     @FXML
-    private ImageView blackPawn2;
+    private ImageView BQ;
     @FXML
-    private ImageView blackPawn3;
+    private ImageView Bk;
     @FXML
-    private ImageView blackPawn4;
+    private ImageView BP1;
     @FXML
-    private ImageView blackPawn5;
+    private ImageView BP2;
     @FXML
-    private ImageView blackPawn6;
+    private ImageView BP3;
     @FXML
-    private ImageView blackPawn7;
+    private ImageView BP4;
     @FXML
-    private ImageView blackPawn8;
+    private ImageView BP5;
     @FXML
-    private ImageView blackQueen;
+    private ImageView BP6;
     @FXML
-    private ImageView blackRook1;
+    private ImageView BP7;
     @FXML
-    private ImageView blackRook2;
+    private ImageView BP8;
 
     static protected ImageView[][] board = new ImageView[8][8];
-
-
-
     DraggableMaker draggableMaker = new DraggableMaker(board);
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
 
 
-        board[0][7] = whiteRook1;
-        board[7][7] = whiteRook2;
-        board[1][7] = whiteKnight1;
-        board[6][7] = whiteKnight2;
-        board[2][7] = whiteBishop1;
-        board[5][7] = whiteBishop2;
-        board[3][7] = whiteQueen;
-        board[4][7] = whiteKing;
-        board[0][6] = whitePawn1;
-        board[1][6] = whitePawn2;
-        board[2][6] = whitePawn3;
-        board[3][6] = whitePawn4;
-        board[4][6] = whitePawn5;
-        board[5][6] = whitePawn6;
-        board[6][6] = whitePawn7;
-        board[7][6] = whitePawn8;
+        board[0][7] = WR1;
+        board[7][7] = WR2;
+        board[1][7] = WK1;
+        board[6][7] = WK2;
+        board[2][7] = WB1;
+        board[5][7] = WB2;
+        board[3][7] = WQ;
+        board[4][7] = Wk;
+        board[0][6] = WP1;
+        board[1][6] = WP2;
+        board[2][6] = WP3;
+        board[3][6] = WP4;
+        board[4][6] = WP5;
+        board[5][6] = WP6;
+        board[6][6] = WP7;
+        board[7][6] = WP8;
 
-        board[0][0] = blackRook1;
-        board[7][0] = blackRook2;
-        board[1][0] = blackKnight1;
-        board[6][0] = blackKnight2;
-        board[2][0] = blackBishop1;
-        board[5][0] = blackBishop2;
-        board[3][0] = blackQueen;
-        board[4][0] = blackKing;
-        board[0][1] = blackPawn1;
-        board[1][1] = blackPawn2;
-        board[2][1] = blackPawn3;
-        board[3][1] = blackPawn4;
-        board[4][1] = blackPawn5;
-        board[5][1] = blackPawn6;
-        board[6][1] = blackPawn7;
-        board[7][1] = blackPawn8;
+        board[0][0] = BR1;
+        board[7][0] = BR2;
+        board[1][0] = BK1;
+        board[6][0] = BK2;
+        board[2][0] = BB1;
+        board[5][0] = BB2;
+        board[3][0] = BQ;
+        board[4][0] = Bk;
+        board[0][1] = BP1;
+        board[1][1] = BP2;
+        board[2][1] = BP3;
+        board[3][1] = BP4;
+        board[4][1] = BP5;
+        board[5][1] = BP6;
+        board[6][1] = BP7;
+        board[7][1] = BP8;
 
         for (int i = 2; i < 6; i++) {
             for (int j = 0; j < 8; j++) {

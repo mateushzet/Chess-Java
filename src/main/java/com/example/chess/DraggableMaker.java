@@ -5,9 +5,9 @@ import javafx.scene.image.ImageView;
 public class DraggableMaker {
     private double mouseAnchorX;
     private double mouseAnchorY;
-    static String turn = "white";
-    private int nodeX;
-    private int nodeY;
+    static String turn = "W";
+    private int startX;
+    private int startY;
     private String color;
     static protected ImageView[][] board;
     private ImageView temp;
@@ -19,12 +19,12 @@ public class DraggableMaker {
     public void makeDraggable(Node node){
 
         node.setOnMousePressed(mouseEvent -> {
-            nodeX = (int)node.getLayoutX();
-            nodeY = (int)node.getLayoutY();
+            startX = (int)node.getLayoutX();
+            startY = (int)node.getLayoutY();
         });
 
         node.setOnMouseDragged(mouseEvent -> {
-            color = node.getId().substring(0,5);
+            color = node.getId().substring(0,1);
             if(turn.equals(color)) {
                 if (mouseEvent.getSceneX() - mouseAnchorX > 700)
                     node.setLayoutX(700);
@@ -45,34 +45,34 @@ public class DraggableMaker {
 
         node.setOnMouseReleased(mouseDragEvent -> {
 
-            color = node.getId().substring(0,5);
+            color = node.getId().substring(0,1);
             if(turn.equals(color)) {
-                int fieldX, fieldY;
+                int targetX, targetY;
                 if (mouseDragEvent.getSceneX() > 700)
-                    fieldX = 700;
+                    targetX = 700;
                 else if (mouseDragEvent.getSceneX() < 0)
-                    fieldX = 0;
+                    targetX = 0;
                 else
-                    fieldX = (int) mouseDragEvent.getSceneX() / 100 * 100;
+                    targetX = (int) mouseDragEvent.getSceneX() / 100 * 100;
 
                 if (mouseDragEvent.getSceneY() > 700)
-                    fieldY = 700;
+                    targetY = 700;
                 else if (mouseDragEvent.getSceneY() < 0)
-                    fieldY = 0;
+                    targetY = 0;
                 else
-                    fieldY = (int) mouseDragEvent.getSceneY() / 100 * 100;
+                    targetY = (int) mouseDragEvent.getSceneY() / 100 * 100;
 
 
+                System.out.println(node.getId());
 
-
-                if(isMoveLegal()){
-                if(board[fieldX/100][fieldY/100] != null)
-                board[fieldX/100][fieldY/100].setVisible(false);
-                board[fieldX/100][fieldY/100] = board[nodeX/100][nodeY/100];
-                board[nodeX/100][nodeY/100] = null;
-                node.setLayoutX(fieldX);
-                node.setLayoutY(fieldY);
-                turn = turn.equals("white") ? "black" : "white";
+                if(isMoveLegal(startX, startY, targetX, targetY, node)){
+                if(board[targetX/100][targetY/100] != null)
+                board[targetX/100][targetY/100].setVisible(false);
+                board[targetX/100][targetY/100] = board[startX /100][startY /100];
+                board[startX /100][startY /100] = null;
+                node.setLayoutX(targetX);
+                node.setLayoutY(targetY);
+                turn = turn.equals("W") ? "B" : "W";
 
                 for (int i = 0; i < 8; i++) {
                     for (int j = 0; j < 8 ; j++) {
@@ -83,14 +83,42 @@ public class DraggableMaker {
                     System.out.println();
                 }
             } else{
-                    node.setLayoutX(nodeX);
-                    node.setLayoutY(nodeY);
+                    node.setLayoutX(startX);
+                    node.setLayoutY(startY);
                 }
             }
 
         });
     }
-    private boolean isMoveLegal(){
+    private boolean isMoveLegal(int startX, int startY, int targetX, int targetY, Node node){
+        char pieceType = node.getId().charAt(0);
+        switch (pieceType){
+            case 'R':
+
+                break;
+
+            case 'K':
+
+                break;
+
+            case 'B':
+
+                break;
+
+            case 'Q':
+
+                break;
+
+            case 'k':
+
+                break;
+
+            case 'P':
+                if(startY>targetY){
+                    if
+                }
+                break;
+        }
         return true;
     }
 }
