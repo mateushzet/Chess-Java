@@ -2,6 +2,8 @@ package com.example.chess;
 import javafx.scene.Node;
 import javafx.scene.image.ImageView;
 
+import static java.lang.Math.abs;
+
 public class DraggableMaker {
     private double mouseAnchorX;
     private double mouseAnchorY;
@@ -65,7 +67,7 @@ public class DraggableMaker {
 
                 System.out.println(node.getId());
 
-                if(isMoveLegal(startX, startY, targetX, targetY, node)){
+                if(isMoveLegal(startX/100, startY/100, targetX/100, targetY/100, node)){
                 if(board[targetX/100][targetY/100] != null)
                 board[targetX/100][targetY/100].setVisible(false);
                 board[targetX/100][targetY/100] = board[startX /100][startY /100];
@@ -91,34 +93,137 @@ public class DraggableMaker {
         });
     }
     private boolean isMoveLegal(int startX, int startY, int targetX, int targetY, Node node){
-        char pieceType = node.getId().charAt(0);
+        char pieceType = node.getId().charAt(1);
+        char pieceColor = node.getId().charAt(0);
+        boolean temp = true;
         switch (pieceType){
             case 'R':
-
-                break;
+                if (targetX == startX || targetY == startY) {
+                    int dx = (targetX == startX) ? 0 : (targetX - startX > 0) ? 1 : -1;
+                    int dy = (targetY == startY) ? 0 : (targetY - startY > 0) ? 1 : -1;
+                    int x = startX + dx;
+                    int y = startY + dy;
+                    while (x != targetX || y != targetY) {
+                        if (board[x][y] != null) {
+                            return false;
+                        }
+                        x += dx;
+                        y += dy;
+                    }
+                    if(allyOnField(board[targetX][targetY], pieceColor)){
+                    return false;
+                    }else return true;
+                } else {
+                    return false;
+                }
 
             case 'K':
-
-                break;
+                if ((targetX == startX + 1 && targetY == startY + 2) || (targetX == startX - 1 && targetY == startY + 2) ||
+                        (targetX == startX + 1 && targetY == startY - 2) || (targetX == startX - 1 && targetY == startY - 2) ||
+                        (targetX == startX + 2 && targetY == startY + 1) || (targetX == startX - 2 && targetY == startY + 1) ||
+                        (targetX == startX + 2 && targetY == startY - 1) || (targetX == startX - 2 && targetY == startY - 1)) {
+                    if(allyOnField(board[targetX][targetY], pieceColor)){
+                        return false;
+                    } else return true;
+                } else {
+                    return false;
+                }
 
             case 'B':
-
-                break;
-
+                if (Math.abs(targetX - startX) == Math.abs(targetY - startY)) {
+                    int dx = (targetX - startX > 0) ? 1 : -1;
+                    int dy = (targetY - startY > 0) ? 1 : -1;
+                    int x = startX + dx;
+                    int y = startY + dy;
+                    while (x != targetX && y != targetY) {
+                        if (board[x][y] != null) {
+                            return false;
+                        }
+                        x += dx;
+                        y += dy;
+                    }
+                    if(allyOnField(board[targetX][targetY], pieceColor)){
+                        return false;
+                    }else return true;
+                } else {
+                    return false;
+                }
             case 'Q':
-
-                break;
+                if (targetX == startX || targetY == startY || Math.abs(targetX - startX) == Math.abs(targetY - startY)) {
+                    int dx = (targetX == startX) ? 0 : (targetX - startX > 0) ? 1 : -1;
+                    int dy = (targetY == startY) ? 0 : (targetY - startY > 0) ? 1 : -1;
+                    if (dx != 0 && dy != 0) {
+                        dx = (targetX - startX > 0) ? 1 : -1;
+                        dy = (targetY - startY > 0) ? 1 : -1;
+                    }
+                    int x = startX + dx;
+                    int y = startY + dy;
+                    while (x != targetX || y != targetY) {
+                        if (board[x][y] != null) {
+                            return false;
+                        }
+                        x += dx;
+                        y += dy;
+                    }
+                    if(allyOnField(board[targetX][targetY], pieceColor)){
+                        return false;
+                    } else return true;
+                } else {
+                    return false;
+                }
 
             case 'k':
-
-                break;
+                int dx = Math.abs(targetX - startX);
+                int dy = Math.abs(targetY - startY);
+                if (dx <= 1 && dy <= 1) {
+                    if(allyOnField(board[targetX][targetY], pieceColor)){
+                        return false;
+                    }else return true;
+                } else {
+                    return false;
+                }
 
             case 'P':
-                if(startY>targetY){
-                    if
-                }
-                break;
+                    if(pieceColor == 'B'){
+                        if(startX == targetX && targetY-startY==1 && board[targetX][targetY] == null){
+                            return true;
+                        }
+                        if(startX == targetX && targetY-startY==2 && board[targetX][targetY-1] == null && board[targetX][targetY] == null && startY == 1){
+                            return true;
+                        }
+                        if((startX-targetX == 1 || startX-targetX == -1) && targetY-startY==1 && enemyOnField(board[targetX][targetY], pieceColor)){
+                            return true;
+                        }else return false;
+
+                    }else{
+                        if(startX == targetX && targetY-startY==-1 && board[targetX][targetY] == null){
+                            return true;
+                        }
+                        if(startX == targetX && targetY-startY==-2 && board[targetX][targetY+1] == null && board[targetX][targetY] == null  && startY == 6){
+                            return true;
+                        }
+                        if((startX-targetX == 1 || startX-targetX == -1) && targetY-startY==-1 && enemyOnField(board[targetX][targetY], pieceColor)){
+                            return true;
+                        }else return false;
+
+                    }
         }
+        return false;
+    }
+
+    boolean enemyOnField(ImageView field, char pieceColor){
+        if(field == null)
+            return false;
+        if(field.getId().charAt(0) == pieceColor)
+            return false;
         return true;
+    }
+
+    boolean allyOnField(ImageView field, char pieceColor){
+        if(field == null)
+            return false;
+        if(field.getId().charAt(0) == pieceColor)
+            return true;
+        return false;
     }
 }
