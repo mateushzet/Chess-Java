@@ -3,6 +3,7 @@ package com.example.chess;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.image.ImageView;
+import javafx.scene.paint.Paint;
 import javafx.scene.shape.Rectangle;
 
 import java.net.URL;
@@ -337,7 +338,6 @@ public class Controller implements Initializable {
         boardFields[7][5] = f75;
         boardFields[7][6] = f76;
         boardFields[7][7] = f77;
-
 
     }
 }
