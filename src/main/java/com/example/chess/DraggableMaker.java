@@ -2,20 +2,18 @@ package com.example.chess;
 import javafx.scene.Node;
 import javafx.scene.image.ImageView;
 import javafx.scene.paint.Paint;
-
-import static java.lang.Math.abs;
-
 public class DraggableMaker {
     private double mouseAnchorX;
     private double mouseAnchorY;
     static String turn = "W";
+    private int startCoordinatesX;
+    private int startCoordinatesY;
     private int startX;
     private int startY;
     private String color;
     static protected ImageView[][] board;
     int[] blackKing;
     int[] whiteKing;
-    private ImageView temp;
 
     public DraggableMaker(ImageView[][] board) {
         this.board = board;
@@ -30,74 +28,32 @@ public class DraggableMaker {
     public void makeDraggable(Node node) {
 
         node.setOnMousePressed(mouseEvent -> {
-            startX = (int) node.getLayoutX();
-            startY = (int) node.getLayoutY();
+            startCoordinatesX = (int) node.getLayoutX();
+            startCoordinatesY = (int) node.getLayoutY();
+            startX = startCoordinatesX/100;
+            startY = startCoordinatesY/100;
             color = node.getId().substring(0, 1);
-            paintFields(startX / 100, startY / 100, node);
+            paintFields(startX, startY, node);
         });
 
         node.setOnMouseDragged(mouseEvent -> {
             if (turn.equals(color)) {
-                if (mouseEvent.getSceneX() - mouseAnchorX > 700)
-                    node.setLayoutX(700);
-                else if (mouseEvent.getSceneX() - mouseAnchorX < 0)
-                    node.setLayoutX(0);
-                else
-                    node.setLayoutX(mouseEvent.getSceneX() - mouseAnchorX - 50);
-
-                if (mouseEvent.getSceneY() - mouseAnchorY > 700)
-                    node.setLayoutY(700);
-                else if (mouseEvent.getSceneY() - mouseAnchorY < 0)
-                    node.setLayoutY(0);
-                else
-                    node.setLayoutY(mouseEvent.getSceneY() - mouseAnchorY - 50);
-
+                node.setLayoutX(
+                        Math.max(0, Math.min(700, mouseEvent.getSceneX() - mouseAnchorX - 50))
+                );
+                node.setLayoutY(
+                        Math.max(0, Math.min(700, mouseEvent.getSceneY() - mouseAnchorY - 50))
+                );
             }
         });
 
         node.setOnMouseReleased(mouseDragEvent -> {
-
-            color = node.getId().substring(0, 1);
             if (turn.equals(color)) {
-                int targetX, targetY;
-                if (mouseDragEvent.getSceneX() > 700)
-                    targetX = 700;
-                else if (mouseDragEvent.getSceneX() < 0)
-                    targetX = 0;
-                else
-                    targetX = (int) mouseDragEvent.getSceneX() / 100 * 100;
-
-                if (mouseDragEvent.getSceneY() > 700)
-                    targetY = 700;
-                else if (mouseDragEvent.getSceneY() < 0)
-                    targetY = 0;
-                else
-                    targetY = (int) mouseDragEvent.getSceneY() / 100 * 100;
-                if (!checkChecker() && isMoveLegal(startX / 100, startY / 100, targetX / 100, targetY / 100, node)
-                        || checkChecker() && node.getId().charAt(1) == 'k') {
-                    if (board[targetX / 100][targetY / 100] != null)
-                        board[targetX / 100][targetY / 100].setVisible(false);
-                    board[targetX / 100][targetY / 100] = board[startX / 100][startY / 100];
-                    board[startX / 100][startY / 100] = null;
-                    node.setLayoutX(targetX);
-                    node.setLayoutY(targetY);
-                    turn = turn.equals("W") ? "B" : "W";
-                    clearPaint();
-                    if(node.getId().charAt(1) =='k'){
-                        if(color.equals("W")){
-                            whiteKing[0] = targetX/100;
-                            whiteKing[1] = targetY/100;
-                        } else{
-                            blackKing[0] = targetX/100;
-                            blackKing[1] = targetY/100;
-                        }
-                    }
-                    checkChecker();
-                } else {
-                    node.setLayoutX(startX);
-                    node.setLayoutY(startY);
-                    clearPaint();
-                }
+                int targetCoordinatesX = Math.max(0, Math.min(700, (int) mouseDragEvent.getSceneX() / 100 * 100));
+                int targetCoordinatesY = Math.max(0, Math.min(700, (int) mouseDragEvent.getSceneY() / 100 * 100));
+                int targetX = targetCoordinatesX / 100;
+                int targetY = targetCoordinatesY / 100;
+                makeMove(targetX, targetY, targetCoordinatesX, targetCoordinatesY, node);
             }
         });
     }
@@ -105,7 +61,6 @@ public class DraggableMaker {
     private boolean isMoveLegal(int startX, int startY, int targetX, int targetY, Node node) {
         char pieceType = node.getId().charAt(1);
         char pieceColor = node.getId().charAt(0);
-        boolean temp = true;
         switch (pieceType) {
             case 'R':
                 if (targetX == startX || targetY == startY) {
@@ -241,7 +196,7 @@ public class DraggableMaker {
     }
 
     void paintFields(int startX, int startY, Node node) {
-        if (turn.equals(String.valueOf(node.getId().charAt(0)))) {
+        if (turn.equals(String.valueOf(node.getId().charAt(0)))){
             for (int i = 0; i < 8; i++) {
                 for (int j = 0; j < 8; j++) {
                     if (isMoveLegal(startX, startY, i, j, node)) {
@@ -255,35 +210,71 @@ public class DraggableMaker {
     }
 
     void clearPaint() {
-        boolean even = true;
         for (int i = 0; i < 8; i++) {
             for (int j = 0; j < 8; j++) {
-                if (even) {
-                    Controller.boardFields[j][i].setFill(Paint.valueOf("#ecffbf"));
-                    even = false;
-                } else {
-                    Controller.boardFields[j][i].setFill(Paint.valueOf("#47ae47"));
-                    even = true;
-                }
+                String color = ((i + j) % 2 == 0) ? "#ecffbf" : "#47ae47";
+                Controller.boardFields[j][i].setFill(Paint.valueOf(color));
             }
-            even = (even == false ? true : false);
         }
     }
 
-    boolean checkChecker() {
+    boolean checkChecker(String player) {
         boolean isCheck = false;
-        for (int i = 0; i < 8; i++) {
-            for (int j = 0; j < 8; j++) {
-                if(board[i][j] != null){
-                    if(color.equals("W")){
-                        if(isMoveLegal(i, j, whiteKing[0], whiteKing[1], board[i][j])) isCheck = true;
-                    }else{
-                        if(isMoveLegal(i, j, blackKing[0], blackKing[1], board[i][j])) isCheck = true;
+        for (int i = 0; i < 8 && !isCheck; i++) {
+            for (int j = 0; j < 8 && !isCheck; j++) {
+                if (board[i][j] != null) {
+                    if (player.equals("W")) {
+                        isCheck = isMoveLegal(i, j, whiteKing[0], whiteKing[1], board[i][j]) ? true : false;
+                    } else {
+                        isCheck = isMoveLegal(i, j, blackKing[0], blackKing[1], board[i][j]) ? true : false;
                     }
                 }
             }
         }
-        if(isCheck) System.out.println("check");
         return isCheck;
+    }
+
+    private void updateKingsPosition(int targetX, int targetY, Node node) {
+        if(node.getId().charAt(1) =='k'){
+            if(color.equals("W")){
+                whiteKing[0] = targetX;
+                whiteKing[1] = targetY;
+            } else{
+                blackKing[0] = targetX;
+                blackKing[1] = targetY;
+            }
+        }
+    }
+
+    void checkPaint(){
+        if(checkChecker("W")) {
+            Controller.boardFields[whiteKing[0]][whiteKing[1]].setFill(Paint.valueOf("red"));
+        }
+        if(checkChecker("B")) {
+            Controller.boardFields[blackKing[0]][blackKing[1]].setFill(Paint.valueOf("red"));
+        }
+    }
+
+    void makeMove(int targetX, int targetY, int targetCoordinatesX, int targetCoordinatesY, Node node){
+        boolean canMove = isMoveLegal(startX, startY, targetX, targetY, node);
+        boolean isKingMove = node.getId().charAt(1) == 'k';
+        boolean isNotCheck = !checkChecker(color);
+
+        if (canMove && (isNotCheck || isKingMove)){
+            if (board[targetX][targetY] != null) board[targetX][targetY].setVisible(false);
+            board[targetX][targetY] = board[startX][startY];
+            board[startX][startY] = null;
+            node.setLayoutX(targetCoordinatesX);
+            node.setLayoutY(targetCoordinatesY);
+            turn = turn.equals("W") ? "B" : "W";
+            updateKingsPosition(targetX, targetY, node);
+            clearPaint();
+            checkPaint();
+        } else {
+            node.setLayoutX(startCoordinatesX);
+            node.setLayoutY(startCoordinatesY);
+            clearPaint();
+            checkPaint();
+        }
     }
 }
