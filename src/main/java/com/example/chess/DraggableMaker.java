@@ -13,44 +13,52 @@ public class DraggableMaker {
     private int startY;
     private String color;
     static protected ImageView[][] board;
+    int[] blackKing;
+    int[] whiteKing;
     private ImageView temp;
 
     public DraggableMaker(ImageView[][] board) {
         this.board = board;
+        blackKing = new int[2];
+        whiteKing = new int[2];
+        blackKing[0] = 4;
+        blackKing[1] = 0;
+        whiteKing[0] = 4;
+        whiteKing[1] = 7;
     }
 
-    public void makeDraggable(Node node){
+    public void makeDraggable(Node node) {
 
         node.setOnMousePressed(mouseEvent -> {
-            startX = (int)node.getLayoutX();
-            startY = (int)node.getLayoutY();
-            color = node.getId().substring(0,1);
-            paintFields(startX/100, startY/100, node);
+            startX = (int) node.getLayoutX();
+            startY = (int) node.getLayoutY();
+            color = node.getId().substring(0, 1);
+            paintFields(startX / 100, startY / 100, node);
         });
 
         node.setOnMouseDragged(mouseEvent -> {
-            if(turn.equals(color)) {
+            if (turn.equals(color)) {
                 if (mouseEvent.getSceneX() - mouseAnchorX > 700)
                     node.setLayoutX(700);
                 else if (mouseEvent.getSceneX() - mouseAnchorX < 0)
                     node.setLayoutX(0);
                 else
-                    node.setLayoutX(mouseEvent.getSceneX() - mouseAnchorX-50);
+                    node.setLayoutX(mouseEvent.getSceneX() - mouseAnchorX - 50);
 
                 if (mouseEvent.getSceneY() - mouseAnchorY > 700)
                     node.setLayoutY(700);
                 else if (mouseEvent.getSceneY() - mouseAnchorY < 0)
                     node.setLayoutY(0);
                 else
-                    node.setLayoutY(mouseEvent.getSceneY() - mouseAnchorY-50);
+                    node.setLayoutY(mouseEvent.getSceneY() - mouseAnchorY - 50);
 
             }
         });
 
         node.setOnMouseReleased(mouseDragEvent -> {
 
-            color = node.getId().substring(0,1);
-            if(turn.equals(color)) {
+            color = node.getId().substring(0, 1);
+            if (turn.equals(color)) {
                 int targetX, targetY;
                 if (mouseDragEvent.getSceneX() > 700)
                     targetX = 700;
@@ -65,30 +73,40 @@ public class DraggableMaker {
                     targetY = 0;
                 else
                     targetY = (int) mouseDragEvent.getSceneY() / 100 * 100;
-
-                if(isMoveLegal(startX/100, startY/100, targetX/100, targetY/100, node)){
-                if(board[targetX/100][targetY/100] != null)
-                board[targetX/100][targetY/100].setVisible(false);
-                board[targetX/100][targetY/100] = board[startX /100][startY /100];
-                board[startX /100][startY /100] = null;
-                node.setLayoutX(targetX);
-                node.setLayoutY(targetY);
-                turn = turn.equals("W") ? "B" : "W";
-                clearPaint();
-            } else{
+                if (!checkChecker() && isMoveLegal(startX / 100, startY / 100, targetX / 100, targetY / 100, node)
+                        || checkChecker() && node.getId().charAt(1) == 'k') {
+                    if (board[targetX / 100][targetY / 100] != null)
+                        board[targetX / 100][targetY / 100].setVisible(false);
+                    board[targetX / 100][targetY / 100] = board[startX / 100][startY / 100];
+                    board[startX / 100][startY / 100] = null;
+                    node.setLayoutX(targetX);
+                    node.setLayoutY(targetY);
+                    turn = turn.equals("W") ? "B" : "W";
+                    clearPaint();
+                    if(node.getId().charAt(1) =='k'){
+                        if(color.equals("W")){
+                            whiteKing[0] = targetX/100;
+                            whiteKing[1] = targetY/100;
+                        } else{
+                            blackKing[0] = targetX/100;
+                            blackKing[1] = targetY/100;
+                        }
+                    }
+                    checkChecker();
+                } else {
                     node.setLayoutX(startX);
                     node.setLayoutY(startY);
                     clearPaint();
                 }
             }
-
         });
     }
-    private boolean isMoveLegal(int startX, int startY, int targetX, int targetY, Node node){
+
+    private boolean isMoveLegal(int startX, int startY, int targetX, int targetY, Node node) {
         char pieceType = node.getId().charAt(1);
         char pieceColor = node.getId().charAt(0);
         boolean temp = true;
-        switch (pieceType){
+        switch (pieceType) {
             case 'R':
                 if (targetX == startX || targetY == startY) {
                     int dx = (targetX == startX) ? 0 : (targetX - startX > 0) ? 1 : -1;
@@ -102,9 +120,9 @@ public class DraggableMaker {
                         x += dx;
                         y += dy;
                     }
-                    if(allyOnField(board[targetX][targetY], pieceColor)){
-                    return false;
-                    }else return true;
+                    if (allyOnField(board[targetX][targetY], pieceColor)) {
+                        return false;
+                    } else return true;
                 } else {
                     return false;
                 }
@@ -114,7 +132,7 @@ public class DraggableMaker {
                         (targetX == startX + 1 && targetY == startY - 2) || (targetX == startX - 1 && targetY == startY - 2) ||
                         (targetX == startX + 2 && targetY == startY + 1) || (targetX == startX - 2 && targetY == startY + 1) ||
                         (targetX == startX + 2 && targetY == startY - 1) || (targetX == startX - 2 && targetY == startY - 1)) {
-                    if(allyOnField(board[targetX][targetY], pieceColor)){
+                    if (allyOnField(board[targetX][targetY], pieceColor)) {
                         return false;
                     } else return true;
                 } else {
@@ -128,7 +146,7 @@ public class DraggableMaker {
                     int x = startX + dx;
                     int y = startY + dy;
                     while (x != targetX && y != targetY) {
-                        if(x<0 || y <0){
+                        if (x < 0 || y < 0) {
                             return false;
                         }
                         if (board[x][y] != null) {
@@ -137,9 +155,9 @@ public class DraggableMaker {
                         x += dx;
                         y += dy;
                     }
-                    if(allyOnField(board[targetX][targetY], pieceColor)){
+                    if (allyOnField(board[targetX][targetY], pieceColor)) {
                         return false;
-                    }else return true;
+                    } else return true;
                 } else {
                     return false;
                 }
@@ -160,7 +178,7 @@ public class DraggableMaker {
                         x += dx;
                         y += dy;
                     }
-                    if(allyOnField(board[targetX][targetY], pieceColor)){
+                    if (allyOnField(board[targetX][targetY], pieceColor)) {
                         return false;
                     } else return true;
                 } else {
@@ -171,59 +189,59 @@ public class DraggableMaker {
                 int dx = Math.abs(targetX - startX);
                 int dy = Math.abs(targetY - startY);
                 if (dx <= 1 && dy <= 1) {
-                    if(allyOnField(board[targetX][targetY], pieceColor)){
+                    if (allyOnField(board[targetX][targetY], pieceColor)) {
                         return false;
-                    }else return true;
+                    } else return true;
                 } else {
                     return false;
                 }
 
             case 'P':
-                    if(pieceColor == 'B'){
-                        if(startX == targetX && targetY-startY==1 && board[targetX][targetY] == null){
-                            return true;
-                        }
-                        if(startX == targetX && targetY-startY==2 && board[targetX][targetY-1] == null && board[targetX][targetY] == null && startY == 1){
-                            return true;
-                        }
-                        if((startX-targetX == 1 || startX-targetX == -1) && targetY-startY==1 && enemyOnField(board[targetX][targetY], pieceColor)){
-                            return true;
-                        }else return false;
-
-                    }else{
-                        if(startX == targetX && targetY-startY==-1 && board[targetX][targetY] == null){
-                            return true;
-                        }
-                        if(startX == targetX && targetY-startY==-2 && board[targetX][targetY+1] == null && board[targetX][targetY] == null  && startY == 6){
-                            return true;
-                        }
-                        if((startX-targetX == 1 || startX-targetX == -1) && targetY-startY==-1 && enemyOnField(board[targetX][targetY], pieceColor)){
-                            return true;
-                        }else return false;
-
+                if (pieceColor == 'B') {
+                    if (startX == targetX && targetY - startY == 1 && board[targetX][targetY] == null) {
+                        return true;
                     }
+                    if (startX == targetX && targetY - startY == 2 && board[targetX][targetY - 1] == null && board[targetX][targetY] == null && startY == 1) {
+                        return true;
+                    }
+                    if ((startX - targetX == 1 || startX - targetX == -1) && targetY - startY == 1 && enemyOnField(board[targetX][targetY], pieceColor)) {
+                        return true;
+                    } else return false;
+
+                } else {
+                    if (startX == targetX && targetY - startY == -1 && board[targetX][targetY] == null) {
+                        return true;
+                    }
+                    if (startX == targetX && targetY - startY == -2 && board[targetX][targetY + 1] == null && board[targetX][targetY] == null && startY == 6) {
+                        return true;
+                    }
+                    if ((startX - targetX == 1 || startX - targetX == -1) && targetY - startY == -1 && enemyOnField(board[targetX][targetY], pieceColor)) {
+                        return true;
+                    } else return false;
+
+                }
         }
         return false;
     }
 
-    boolean enemyOnField(ImageView field, char pieceColor){
-        if(field == null)
+    boolean enemyOnField(ImageView field, char pieceColor) {
+        if (field == null)
             return false;
-        if(field.getId().charAt(0) == pieceColor)
+        if (field.getId().charAt(0) == pieceColor)
             return false;
         return true;
     }
 
-    boolean allyOnField(ImageView field, char pieceColor){
-        if(field == null)
+    boolean allyOnField(ImageView field, char pieceColor) {
+        if (field == null)
             return false;
-        if(field.getId().charAt(0) == pieceColor)
+        if (field.getId().charAt(0) == pieceColor)
             return true;
         return false;
     }
 
-    void paintFields(int startX, int startY, Node node){
-        if(turn.equals(String.valueOf(node.getId().charAt(0)))) {
+    void paintFields(int startX, int startY, Node node) {
+        if (turn.equals(String.valueOf(node.getId().charAt(0)))) {
             for (int i = 0; i < 8; i++) {
                 for (int j = 0; j < 8; j++) {
                     if (isMoveLegal(startX, startY, i, j, node)) {
@@ -236,11 +254,11 @@ public class DraggableMaker {
         }
     }
 
-    void clearPaint(){
+    void clearPaint() {
         boolean even = true;
         for (int i = 0; i < 8; i++) {
-            for (int j = 0; j < 8 ; j++) {
-                if(even){
+            for (int j = 0; j < 8; j++) {
+                if (even) {
                     Controller.boardFields[j][i].setFill(Paint.valueOf("#ecffbf"));
                     even = false;
                 } else {
@@ -248,7 +266,24 @@ public class DraggableMaker {
                     even = true;
                 }
             }
-            even = (even == false? true : false);
+            even = (even == false ? true : false);
         }
+    }
+
+    boolean checkChecker() {
+        boolean isCheck = false;
+        for (int i = 0; i < 8; i++) {
+            for (int j = 0; j < 8; j++) {
+                if(board[i][j] != null){
+                    if(color.equals("W")){
+                        if(isMoveLegal(i, j, whiteKing[0], whiteKing[1], board[i][j])) isCheck = true;
+                    }else{
+                        if(isMoveLegal(i, j, blackKing[0], blackKing[1], board[i][j])) isCheck = true;
+                    }
+                }
+            }
+        }
+        if(isCheck) System.out.println("check");
+        return isCheck;
     }
 }
